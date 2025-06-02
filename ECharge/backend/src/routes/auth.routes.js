@@ -6,8 +6,7 @@ const {
   getMe, 
   forgotPassword, 
   verifyOTP, 
-  resetPassword,
-  setPasswordDirectly
+  resetPassword
 } = require('../controllers/auth.controller');
 const { protect } = require('../middleware/auth.middleware');
 
@@ -69,16 +68,6 @@ router.post(
     }),
   ],
   resetPassword
-);
-
-// Temporary route to set password directly (for debugging only)
-router.post(
-  '/set-password-directly',
-  [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-  ],
-  setPasswordDirectly
 );
 
 module.exports = router; 

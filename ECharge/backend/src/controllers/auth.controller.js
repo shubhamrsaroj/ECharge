@@ -99,35 +99,46 @@ exports.login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-    console.log(`Login attempt for email: ${email}`);
-    console.log(`Password length: ${password ? password.length : 'undefined'}`);
-    console.log(`Password first 2 chars: ${password ? password.substring(0, 2) : 'undefined'}...`);
-
+    
     // Check if user exists
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      console.log(`User not found: ${email}`);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials',
       });
     }
-
-    console.log(`User found: ${email}, checking password...`);
-    console.log(`User ID: ${user._id}`);
-    console.log(`Stored password hash length: ${user.password ? user.password.length : 'undefined'}`);
-    console.log(`Stored password hash first 10 chars: ${user.password ? user.password.substring(0, 10) : 'undefined'}...`);
     
-    // Check if password matches
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log(`Password match result: ${isMatch}`);
+    // Try multiple password comparison methods to handle potential issues
+    let isMatch = false;
     
-    // Try direct method comparison as well
-    const isMatchDirect = await user.matchPassword(password);
-    console.log(`Direct password match result: ${isMatchDirect}`);
+    // Method 1: Direct bcrypt compare
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+    } catch (err) {
+      console.error('Error in password comparison:', err);
+    }
+    
+    // Method 2: Try with trimmed password if the first method fails
+    if (!isMatch) {
+      try {
+        const trimmedPassword = password.trim();
+        isMatch = await bcrypt.compare(trimmedPassword, user.password);
+      } catch (err) {
+        console.error('Error in trimmed password comparison:', err);
+      }
+    }
+    
+    // Method 3: Use the model's matchPassword method as a fallback
+    if (!isMatch) {
+      try {
+        isMatch = await user.matchPassword(password);
+      } catch (err) {
+        console.error('Error in model password comparison:', err);
+      }
+    }
     
     if (!isMatch) {
-      console.log(`Password mismatch for user: ${email}`);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials',
@@ -140,8 +151,6 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '1d' }
     );
-
-    console.log(`Login successful for user: ${email}`);
     
     // Return user data (excluding password) and token
     const userData = {
@@ -257,34 +266,27 @@ exports.verifyOTP = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const { email, otp, password } = req.body;
-    console.log(`Reset password attempt for email: ${email}`);
-    console.log(`Password being reset (first 2 chars): ${password.substring(0, 2)}...`);
-    console.log(`Password length: ${password.length}`);
 
     // Verify OTP again
     const storedOTPData = otpStore.get(email);
     if (!storedOTPData || otp !== storedOTPData.otp || Date.now() > storedOTPData.expiresAt) {
-      console.log(`Invalid or expired OTP for email: ${email}`);
       return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
 
     // Find user by email
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      console.log(`User not found during password reset: ${email}`);
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Password validation
     if (password.length < 6) {
-      console.log(`Password too short during reset for email: ${email}`);
       return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
 
     // Enforce strong password
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     if (!strongPasswordRegex.test(password)) {
-      console.log(`Weak password during reset for email: ${email}`);
       return res.status(400).json({ 
         message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character' 
       });
@@ -293,7 +295,6 @@ exports.resetPassword = async (req, res) => {
     // Check if the new password is the same as the old one
     const isSamePassword = await bcrypt.compare(password, user.password);
     if (isSamePassword) {
-      console.log(`User tried to reset with the same password: ${email}`);
       return res.status(400).json({ 
         message: 'New password cannot be the same as your current password. Please choose a different password.' 
       });
@@ -302,28 +303,15 @@ exports.resetPassword = async (req, res) => {
     // Hash new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log(`Password hashed for email: ${email}`);
     
-    // Store original password for debugging
-    const originalPassword = user.password || 'no-previous-password';
-
     // Update user password directly in the database to avoid pre-save hook issues
     await User.findOneAndUpdate(
       { email },
       { $set: { password: hashedPassword } }
     );
-    
-    console.log(`Password updated successfully for email: ${email}`);
-    console.log(`Old password hash: ${originalPassword.substring(0, 10) || 'none'}...`);
-    console.log(`New password hash: ${hashedPassword.substring(0, 10)}...`);
 
     // Delete OTP
     otpStore.delete(email);
-
-    // Verify the password was updated correctly
-    const updatedUser = await User.findOne({ email }).select('+password');
-    const isMatch = await bcrypt.compare(password, updatedUser.password);
-    console.log(`Password verification after update: ${isMatch ? 'Success' : 'Failed'}`);
 
     res.json({ message: 'Password reset successful' });
   } catch (error) {
@@ -332,50 +320,4 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// Temporary endpoint to set password directly (for debugging only)
-exports.setPasswordDirectly = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
-    
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    
-    console.log(`Setting password directly for user: ${email}`);
-    console.log(`New password (first 2 chars): ${password.substring(0, 2)}...`);
-    console.log(`Password length: ${password.length}`);
-    
-    // Hash password manually (bypassing pre-save hook)
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    // Update user password directly in the database
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { password: hashedPassword } }
-    );
-    
-    console.log(`Password updated directly for user: ${email}`);
-    console.log(`New password hash: ${hashedPassword.substring(0, 10)}...`);
-    
-    // Test if the password can be verified
-    const testUser = await User.findOne({ email }).select('+password');
-    const isMatch = await bcrypt.compare(password, testUser.password);
-    console.log(`Test password match: ${isMatch}`);
-    
-    res.json({ 
-      message: 'Password updated directly',
-      success: isMatch,
-      passwordHash: hashedPassword.substring(0, 10) + '...'
-    });
-  } catch (error) {
-    console.error('Set password error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-}; 
+module.exports = exports; 
