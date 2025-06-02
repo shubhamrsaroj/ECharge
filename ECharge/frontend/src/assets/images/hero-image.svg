@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a1a" />
+      <stop offset="100%" stop-color="#2a2a2a" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <linearGradient id="car-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#222" />
+      <stop offset="100%" stop-color="#333" />
+    </linearGradient>
+    <linearGradient id="station-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#222" />
+      <stop offset="100%" stop-color="#333" />
+    </linearGradient>
+    <linearGradient id="road-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#333" />
+      <stop offset="100%" stop-color="#222" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Base background -->
+  <rect width="800" height="600" fill="url(#bg-gradient)" />
+  
+  <!-- Grid lines for tech feel -->
+  <g stroke="#4ade8020" stroke-width="1">
+    <path d="M0,100 H800" />
+    <path d="M0,200 H800" />
+    <path d="M0,300 H800" />
+    <path d="M0,400 H800" />
+    <path d="M0,500 H800" />
+    <path d="M100,0 V600" />
+    <path d="M200,0 V600" />
+    <path d="M300,0 V600" />
+    <path d="M400,0 V600" />
+    <path d="M500,0 V600" />
+    <path d="M600,0 V600" />
+    <path d="M700,0 V600" />
+  </g>
+  
+  <!-- Road -->
+  <rect x="50" y="450" width="700" height="100" rx="5" fill="url(#road-gradient)" />
+  <rect x="100" y="495" width="100" height="10" fill="#4ade80" opacity="0.8" />
+  <rect x="300" y="495" width="100" height="10" fill="#4ade80" opacity="0.8" />
+  <rect x="500" y="495" width="100" height="10" fill="#4ade80" opacity="0.8" />
+  
+  <!-- Charging Station -->
+  <g transform="translate(500, 350)">
+    <!-- Station base -->
+    <rect x="-60" y="-100" width="120" height="200" rx="10" fill="url(#station-gradient)" stroke="#4ade80" stroke-width="2" />
+    
+    <!-- Green accent strip -->
+    <rect x="-60" y="-100" width="120" height="10" rx="5" fill="#4ade80" opacity="0.9" />
+    <rect x="-60" y="90" width="120" height="10" rx="5" fill="#4ade80" opacity="0.9" />
+    
+    <!-- Display panel with green theme -->
+    <rect x="-50" y="-90" width="100" height="60" rx="5" fill="#222" stroke="#4ade80" stroke-width="1" />
+    
+    <!-- Display screen with green border -->
+    <rect x="-40" y="-80" width="80" height="40" rx="3" fill="#111" stroke="#4ade80" stroke-width="1" />
+    <text x="0" y="-55" font-family="Arial" font-size="12" fill="#4ade80" text-anchor="middle">READY</text>
+    
+    <!-- Green status indicator -->
+    <circle cx="0" y="-65" r="5" fill="#4ade80" filter="url(#glow)" />
+    
+    <!-- Charging cable with stronger green -->
+    <path d="M-20,-20 C-40,50 100,100 150,50" stroke="#4ade80" stroke-width="6" fill="none" filter="url(#glow)" />
+    
+    <!-- Charging connector with more prominent green -->
+    <circle cx="150" cy="50" r="15" fill="#333" stroke="#4ade80" stroke-width="2" />
+    <circle cx="150" cy="50" r="8" fill="#4ade80" opacity="0.8" filter="url(#glow)" />
+    
+    <!-- Station details with green theme -->
+    <rect x="-40" y="20" width="80" height="60" rx="5" fill="#222" stroke="#4ade80" stroke-width="1" />
+    <text x="0" y="45" font-family="Arial" font-size="10" fill="#4ade80" text-anchor="middle" font-weight="bold">FAST CHARGE</text>
+    <text x="0" y="65" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">150 kW</text>
+    
+    <!-- Green energy indicator lights -->
+    <circle cx="-45" cy="-95" r="3" fill="#4ade80" opacity="0.8" filter="url(#glow)" />
+    <circle cx="45" cy="-95" r="3" fill="#4ade80" opacity="0.8" filter="url(#glow)" />
+    
+    <!-- Green power level indicators -->
+    <rect x="-30" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="0.6" />
+    <rect x="-20" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="0.7" />
+    <rect x="-10" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="0.8" />
+    <rect x="0" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="0.9" />
+    <rect x="10" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="1" />
+    <rect x="20" y="-15" width="5" height="20" rx="2" fill="#4ade80" opacity="1" filter="url(#glow)" />
+  </g>
+  
+  <!-- Electric Car -->
+  <g transform="translate(250, 400)">
+    <!-- Car body -->
+    <path d="M-120,0 C-110,-40 -80,-60 -30,-60 L80,-60 C130,-60 160,-40 170,0 Z" fill="url(#car-gradient)" stroke="#333" stroke-width="2" />
+    <path d="M-120,0 L-120,50 L170,50 L170,0 Z" fill="url(#car-gradient)" stroke="#333" stroke-width="2" />
+    
+    <!-- Car details -->
+    <rect x="-80" y="-40" width="120" height="30" rx="15" fill="#111" /> <!-- Windows -->
+    <rect x="60" y="-40" width="80" height="30" rx="15" fill="#111" /> <!-- Windows -->
+    
+    <!-- Wheels -->
+    <circle cx="-70" cy="50" r="25" fill="#111" stroke="#333" stroke-width="3" />
+    <circle cx="-70" cy="50" r="15" fill="#222" stroke="#444" stroke-width="2" />
+    <circle cx="120" cy="50" r="25" fill="#111" stroke="#333" stroke-width="3" />
+    <circle cx="120" cy="50" r="15" fill="#222" stroke="#444" stroke-width="2" />
+    
+    <!-- Charging port -->
+    <rect x="160" y="-20" width="20" height="30" rx="5" fill="#111" stroke="#4ade80" stroke-width="2" />
+    <circle cx="170" cy="-5" r="8" fill="#000" stroke="#4ade80" stroke-width="1" />
+    
+    <!-- Headlights -->
+    <rect x="-120" y="-15" width="15" height="10" rx="3" fill="#4ade80" opacity="0.8" filter="url(#glow)" />
+    <rect x="-120" y="-5" width="15" height="10" rx="3" fill="#4ade80" opacity="0.8" filter="url(#glow)" />
+  </g>
+  
+  <!-- Lightning bolt energy symbols -->
+  <g filter="url(#glow)">
+    <path d="M400,100 L380,150 L410,160 L390,210 L450,140 L420,130 L440,100 Z" fill="#4ade80" opacity="0.9" />
+    <path d="M200,150 L190,180 L210,185 L195,220 L230,170 L210,165 L220,150 Z" fill="#4ade80" opacity="0.7" />
+    <path d="M600,130 L590,160 L610,165 L595,200 L630,150 L610,145 L620,130 Z" fill="#4ade80" opacity="0.8" />
+  </g>
+  
+  <!-- Connection lines -->
+  <path d="M400,100 C450,200 500,250 500,350" stroke="#4ade80" stroke-width="2" stroke-dasharray="10,5" opacity="0.6" />
+  <path d="M600,130 C550,200 520,250 500,350" stroke="#4ade80" stroke-width="2" stroke-dasharray="10,5" opacity="0.6" />
+  
+  <!-- Circular tech elements -->
+  <circle cx="150" cy="150" r="40" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.3" />
+  <circle cx="150" cy="150" r="35" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.5" />
+  <circle cx="650" cy="250" r="50" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.3" />
+  <circle cx="650" cy="250" r="45" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.5" />
+  
+  <!-- Small tech details -->
+  <g fill="#4ade80" opacity="0.8">
+    <circle cx="150" cy="150" r="3" />
+    <circle cx="190" cy="150" r="2" />
+    <circle cx="150" cy="190" r="2" />
+    <circle cx="650" cy="250" r="3" />
+    <circle cx="650" cy="200" r="2" />
+    <circle cx="700" cy="250" r="2" />
+  </g>
+</svg> 

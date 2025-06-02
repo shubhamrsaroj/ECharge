@@ -1,0 +1,541 @@
+{
+  "info": {
+    "name": "ECharge API",
+    "description": "API collection for ECharge - Charging Station Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Authentication endpoints",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user"
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login and get JWT token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get current user data"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Charging Stations",
+      "description": "Charging station endpoints",
+      "item": [
+        {
+          "name": "Get All Stations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stations?page=1&limit=10&search=downtown",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "downtown"
+                }
+              ]
+            },
+            "description": "Get all charging stations with pagination and search"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Station by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Get a specific charging station by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Station",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"City Center Charging Station\",\n  \"address\": \"123 Main St, Anytown, USA\",\n  \"description\": \"24/7 charging station in the heart of downtown\",\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [-73.9857, 40.7484]\n  },\n  \"connectorTypes\": [\"Type 2\", \"CCS\"],\n  \"pricePerKwh\": 0.35,\n  \"availableHours\": \"24/7\",\n  \"amenities\": [\"Restrooms\", \"Coffee Shop\", \"WiFi\"],\n  \"photos\": [\"https://example.com/photo1.jpg\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations"
+              ]
+            },
+            "description": "Create a new charging station"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Station",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated City Center Charging Station\",\n  \"address\": \"123 Main St, Anytown, USA\",\n  \"description\": \"24/7 charging station in the heart of downtown with updated facilities\",\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [-73.9857, 40.7484]\n  },\n  \"connectorTypes\": [\"Type 2\", \"CCS\", \"CHAdeMO\"],\n  \"pricePerKwh\": 0.30,\n  \"availableHours\": \"24/7\",\n  \"amenities\": [\"Restrooms\", \"Coffee Shop\", \"WiFi\", \"Convenience Store\"],\n  \"photos\": [\"https://example.com/photo1.jpg\", \"https://example.com/photo2.jpg\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Update an existing charging station"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Station",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Delete a charging station"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "description": "Review endpoints",
+      "item": [
+        {
+          "name": "Get Station Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}",
+                "reviews"
+              ]
+            },
+            "description": "Get all reviews for a specific station"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Great charging station with fast service!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}",
+                "reviews"
+              ]
+            },
+            "description": "Add a new review to a charging station"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Updated: Excellent charging station with very fast service and great amenities!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}",
+                "reviews",
+                "{{reviewId}}"
+              ]
+            },
+            "description": "Update an existing review"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/stations/{{stationId}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stations",
+                "{{stationId}}",
+                "reviews",
+                "{{reviewId}}"
+              ]
+            },
+            "description": "Delete a review"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookmarks",
+      "description": "Bookmark endpoints",
+      "item": [
+        {
+          "name": "Get User Bookmarks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks"
+              ]
+            },
+            "description": "Get all bookmarks for the authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Bookmark",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stationId\": \"{{stationId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks"
+              ]
+            },
+            "description": "Add a new bookmark for a station"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Bookmark",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Delete a bookmark by station ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Bookmark Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks/check/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks",
+                "check",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Check if a station is bookmarked by the current user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Bookmark for Station",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks/station/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks",
+                "station",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Get a user's bookmark for a specific station"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Bookmarks for Station (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookmarks/admin/station/{{stationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookmarks",
+                "admin",
+                "station",
+                "{{stationId}}"
+              ]
+            },
+            "description": "Get all bookmarks for a specific station (admin only)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "YOUR_JWT_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "stationId",
+      "value": "STATION_ID",
+      "type": "string"
+    },
+    {
+      "key": "reviewId",
+      "value": "REVIEW_ID",
+      "type": "string"
+    }
+  ]
+} 

@@ -1,0 +1,1163 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ECharge API",
+    "description": "API documentation for ECharge - Charging Station Management System",
+    "version": "1.0.0",
+    "contact": {
+      "email": "support@echarge.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication operations"
+    },
+    {
+      "name": "stations",
+      "description": "Charging station operations"
+    },
+    {
+      "name": "reviews",
+      "description": "Station review operations"
+    },
+    {
+      "name": "bookmarks",
+      "description": "User bookmark operations"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Register a new user",
+        "description": "Creates a new user account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Email already exists"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login user",
+        "description": "Authenticates a user and returns a JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credentials"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "summary": "Get current user",
+        "description": "Returns the currently authenticated user's data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/stations": {
+      "get": {
+        "tags": ["stations"],
+        "summary": "Get all charging stations",
+        "description": "Returns a list of all charging stations",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term for station name or address"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of charging stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Station"
+                      }
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    },
+                    "currentPage": {
+                      "type": "integer"
+                    },
+                    "totalStations": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["stations"],
+        "summary": "Create a new charging station",
+        "description": "Creates a new charging station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Station created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Station"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/stations/{stationId}": {
+      "get": {
+        "tags": ["stations"],
+        "summary": "Get a specific charging station",
+        "description": "Returns a specific charging station by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Station details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Station"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Station not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["stations"],
+        "summary": "Update a charging station",
+        "description": "Updates an existing charging station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Station updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Station"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not the owner"
+          },
+          "404": {
+            "description": "Station not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["stations"],
+        "summary": "Delete a charging station",
+        "description": "Deletes an existing charging station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Station deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not the owner"
+          },
+          "404": {
+            "description": "Station not found"
+          }
+        }
+      }
+    },
+    "/stations/{stationId}/reviews": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get reviews for a station",
+        "description": "Returns all reviews for a specific charging station",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Station not found"
+          }
+        }
+      },
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Create a review for a station",
+        "description": "Adds a new review to a charging station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Station not found"
+          }
+        }
+      }
+    },
+    "/stations/{stationId}/reviews/{reviewId}": {
+      "put": {
+        "tags": ["reviews"],
+        "summary": "Update a review",
+        "description": "Updates an existing review",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          },
+          {
+            "in": "path",
+            "name": "reviewId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the review to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not the author"
+          },
+          "404": {
+            "description": "Review or station not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["reviews"],
+        "summary": "Delete a review",
+        "description": "Deletes an existing review",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          },
+          {
+            "in": "path",
+            "name": "reviewId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the review to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not the author"
+          },
+          "404": {
+            "description": "Review or station not found"
+          }
+        }
+      }
+    },
+    "/bookmarks": {
+      "get": {
+        "tags": ["bookmarks"],
+        "summary": "Get user bookmarks",
+        "description": "Returns all bookmarks for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of bookmarks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Bookmark"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["bookmarks"],
+        "summary": "Create a bookmark",
+        "description": "Adds a new bookmark for a station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarkInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bookmark created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Station not found"
+          },
+          "409": {
+            "description": "Bookmark already exists"
+          }
+        }
+      }
+    },
+    "/bookmarks/{stationId}": {
+      "delete": {
+        "tags": ["bookmarks"],
+        "summary": "Delete a bookmark",
+        "description": "Deletes an existing bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station to remove from bookmarks"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not the owner"
+          },
+          "404": {
+            "description": "Bookmark not found"
+          }
+        }
+      }
+    },
+    "/bookmarks/check/{stationId}": {
+      "get": {
+        "tags": ["bookmarks"],
+        "summary": "Check bookmark status",
+        "description": "Checks if a station is bookmarked by the current user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station to check"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "isBookmarked": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/bookmarks/station/{stationId}": {
+      "get": {
+        "tags": ["bookmarks"],
+        "summary": "Get user bookmark for station",
+        "description": "Gets a specific user's bookmark for a station",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Bookmark"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Bookmark not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/bookmarks/admin/station/{stationId}": {
+      "get": {
+        "tags": ["bookmarks"],
+        "summary": "Get all bookmarks for station (admin only)",
+        "description": "Gets all bookmarks for a specific station (admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the station"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of bookmarks for station",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Bookmark"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Not an admin"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegistration": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        }
+      },
+      "StationInput": {
+        "type": "object",
+        "required": ["name", "address", "location", "connectorTypes", "pricePerKwh"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "City Center Charging Station"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Anytown, USA"
+          },
+          "description": {
+            "type": "string",
+            "example": "24/7 charging station in the heart of downtown"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["Point"],
+                "example": "Point"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "example": [-73.9857, 40.7484]
+              }
+            }
+          },
+          "connectorTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["Type 1", "Type 2", "CCS", "CHAdeMO", "Tesla"]
+            },
+            "example": ["Type 2", "CCS"]
+          },
+          "pricePerKwh": {
+            "type": "number",
+            "example": 0.35
+          },
+          "availableHours": {
+            "type": "string",
+            "example": "24/7"
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Restrooms", "Coffee Shop", "WiFi"]
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["https://example.com/photo1.jpg"]
+          }
+        }
+      },
+      "Station": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "name": {
+            "type": "string",
+            "example": "City Center Charging Station"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Anytown, USA"
+          },
+          "description": {
+            "type": "string",
+            "example": "24/7 charging station in the heart of downtown"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "Point"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "example": [-73.9857, 40.7484]
+              }
+            }
+          },
+          "connectorTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Type 2", "CCS"]
+          },
+          "pricePerKwh": {
+            "type": "number",
+            "example": 0.35
+          },
+          "availableHours": {
+            "type": "string",
+            "example": "24/7"
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Restrooms", "Coffee Shop", "WiFi"]
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["https://example.com/photo1.jpg"]
+          },
+          "owner": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 4.5
+          },
+          "reviewCount": {
+            "type": "integer",
+            "example": 12
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReviewInput": {
+        "type": "object",
+        "required": ["rating", "comment"],
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 4
+          },
+          "comment": {
+            "type": "string",
+            "example": "Great charging station with fast service!"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "station": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "60d21b4667d0d8992e610c85"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              }
+            }
+          },
+          "rating": {
+            "type": "integer",
+            "example": 4
+          },
+          "comment": {
+            "type": "string",
+            "example": "Great charging station with fast service!"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookmarkInput": {
+        "type": "object",
+        "required": ["stationId"],
+        "properties": {
+          "stationId": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "notes": {
+            "type": "string",
+            "example": "My favorite charging spot near work"
+          }
+        }
+      },
+      "Bookmark": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "user": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "station": {
+            "$ref": "#/components/schemas/Station"
+          },
+          "notes": {
+            "type": "string",
+            "example": "My favorite charging spot near work"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+} 
