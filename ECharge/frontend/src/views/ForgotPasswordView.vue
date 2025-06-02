@@ -310,7 +310,7 @@ const handleSendOTP = async () => {
     message.value = '';
     
     // Call API to send OTP
-    const response = await api.post('/auth/forgot-password', { email: email.value });
+    const response = await api.post('/api/auth/forgot-password', { email: email.value });
     
     // If OTP is available in the response (development mode), display it
     if (response.data.otp) {
@@ -338,7 +338,7 @@ const resendOTP = async () => {
     message.value = '';
     
     // Call API to resend OTP
-    const response = await api.post('/auth/forgot-password', { email: email.value });
+    const response = await api.post('/api/auth/forgot-password', { email: email.value });
     
     // If OTP is available in the response (development mode), display it
     if (response.data.otp) {
@@ -363,7 +363,7 @@ const handleVerifyOTP = async () => {
     message.value = '';
     
     // Call API to verify OTP
-    const response = await api.post('/auth/verify-otp', { 
+    const response = await api.post('/api/auth/verify-otp', { 
       email: email.value,
       otp: otp.value 
     });
@@ -401,7 +401,7 @@ const handleResetPassword = async () => {
     message.value = 'Resetting password...';
     
     // Call API to reset password
-    const response = await api.post('/auth/reset-password', {
+    const response = await api.post('/api/auth/reset-password', {
       email: email.value,
       otp: otp.value,
       password: newPassword.value
