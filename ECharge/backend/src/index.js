@@ -21,7 +21,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://echarge-app.netlify.app', // Add your Netlify domain here
+    'https://echarge-app.netlify.app',
+    'https://e-charge-api.netlify.app', // Add your actual Netlify domain
   ],
   credentials: true,
 }));
