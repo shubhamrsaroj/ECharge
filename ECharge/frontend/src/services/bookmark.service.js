@@ -7,7 +7,7 @@ const bookmarkService = {
    */
   async getUserBookmarks() {
     try {
-      const response = await api.get('/bookmarks');
+      const response = await api.get('/api/bookmarks');
       return response.data;
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
@@ -22,7 +22,7 @@ const bookmarkService = {
    */
   async addBookmark(stationId) {
     try {
-      const response = await api.post('/bookmarks', { stationId });
+      const response = await api.post('/api/bookmarks', { stationId });
       return response.data;
     } catch (error) {
       console.error('Error adding bookmark:', error);
@@ -37,7 +37,7 @@ const bookmarkService = {
    */
   async removeBookmark(stationId) {
     try {
-      const response = await api.delete(`/bookmarks/${stationId}`);
+      const response = await api.delete(`/api/bookmarks/${stationId}`);
       return response.data;
     } catch (error) {
       if (error.response?.status === 403) {
@@ -58,7 +58,7 @@ const bookmarkService = {
    */
   async isBookmarked(stationId) {
     try {
-      const response = await api.get(`/bookmarks/check/${stationId}`);
+      const response = await api.get(`/api/bookmarks/check/${stationId}`);
       return response.data;
     } catch (error) {
       console.error('Error checking bookmark status:', error);
@@ -73,7 +73,7 @@ const bookmarkService = {
    */
   async getUserBookmarkForStation(stationId) {
     try {
-      const response = await api.get(`/bookmarks/station/${stationId}`);
+      const response = await api.get(`/api/bookmarks/station/${stationId}`);
       return response.data;
     } catch (error) {
       if (error.response?.status === 404) {

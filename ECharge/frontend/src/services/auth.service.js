@@ -7,7 +7,7 @@ const authService = {
    * @returns {Promise} - Promise with user data and token
    */
   async register(userData) {
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/api/auth/register', userData);
     return response.data;
   },
 
@@ -17,7 +17,7 @@ const authService = {
    * @returns {Promise} - Promise with user data and token
    */
   async login(credentials) {
-    const response = await api.post('/auth/login', credentials);
+    const response = await api.post('/api/auth/login', credentials);
     return response.data;
   },
 
@@ -26,7 +26,7 @@ const authService = {
    * @returns {Promise} - Promise with user data
    */
   async getCurrentUser() {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/api/auth/me');
     return response.data;
   },
 };

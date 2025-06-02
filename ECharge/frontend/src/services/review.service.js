@@ -8,7 +8,7 @@ const reviewService = {
    */
   async getStationReviews(stationId) {
     try {
-      const response = await api.get(`/stations/${stationId}/reviews`);
+      const response = await api.get(`/api/stations/${stationId}/reviews`);
       return response.data;
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -24,7 +24,7 @@ const reviewService = {
    */
   async addReview(stationId, reviewData) {
     try {
-      const response = await api.post(`/stations/${stationId}/reviews`, reviewData);
+      const response = await api.post(`/api/stations/${stationId}/reviews`, reviewData);
       return response.data;
     } catch (error) {
       console.error('Error adding review:', error);
@@ -41,7 +41,7 @@ const reviewService = {
    */
   async updateReview(stationId, reviewId, reviewData) {
     try {
-      const response = await api.put(`/stations/${stationId}/reviews/${reviewId}`, reviewData);
+      const response = await api.put(`/api/stations/${stationId}/reviews/${reviewId}`, reviewData);
       return response.data;
     } catch (error) {
       console.error('Error updating review:', error);
@@ -57,7 +57,7 @@ const reviewService = {
    */
   async deleteReview(stationId, reviewId) {
     try {
-      const response = await api.delete(`/stations/${stationId}/reviews/${reviewId}`);
+      const response = await api.delete(`/api/stations/${stationId}/reviews/${reviewId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting review:', error);
@@ -72,7 +72,7 @@ const reviewService = {
    */
   async getUserReview(stationId) {
     try {
-      const response = await api.get(`/stations/${stationId}/reviews/user`);
+      const response = await api.get(`/api/stations/${stationId}/reviews/user`);
       return response.data;
     } catch (error) {
       console.error('Error checking user review:', error);

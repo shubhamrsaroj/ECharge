@@ -9,7 +9,7 @@ const stationService = {
   async getStations(params = {}) {
     try {
       console.log('Fetching stations with params:', params);
-      const response = await api.get('/stations', { params });
+      const response = await api.get('/api/stations', { params });
       console.log('Stations API response:', response.data);
       return response.data;
     } catch (error) {
@@ -28,7 +28,7 @@ const stationService = {
   async getNearbyStations(lat, lng, distance = 10) {
     try {
       console.log(`Fetching nearby stations at (${lat}, ${lng}) within ${distance}km`);
-      const response = await api.get('/stations/nearby', {
+      const response = await api.get('/api/stations/nearby', {
         params: { lat, lng, distance },
       });
       console.log('Nearby stations API response:', response.data);
@@ -47,7 +47,7 @@ const stationService = {
   async getStationById(id) {
     try {
       console.log(`Fetching station with ID: ${id}`);
-      const response = await api.get(`/stations/${id}`);
+      const response = await api.get(`/api/stations/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching station ${id}:`, error);
@@ -63,7 +63,7 @@ const stationService = {
   async createStation(stationData) {
     try {
       console.log('Creating new station:', stationData);
-      const response = await api.post('/stations', stationData);
+      const response = await api.post('/api/stations', stationData);
       return response.data;
     } catch (error) {
       console.error('Error creating station:', error);
@@ -80,7 +80,7 @@ const stationService = {
   async updateStation(id, stationData) {
     try {
       console.log(`Updating station ${id}:`, stationData);
-      const response = await api.put(`/stations/${id}`, stationData);
+      const response = await api.put(`/api/stations/${id}`, stationData);
       return response.data;
     } catch (error) {
       console.error(`Error updating station ${id}:`, error);
@@ -96,7 +96,7 @@ const stationService = {
   async deleteStation(id) {
     try {
       console.log(`Deleting station ${id}`);
-      const response = await api.delete(`/stations/${id}`);
+      const response = await api.delete(`/api/stations/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error deleting station ${id}:`, error);
