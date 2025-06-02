@@ -25,6 +25,7 @@ app.use(cors({
     'https://e-charge-api.netlify.app', // Add your actual Netlify domain
   ],
   credentials: true,
+
 }));
 app.use(express.json());
 app.use(morgan('dev'));
@@ -50,6 +51,28 @@ app.use('/api/bookmarks', bookmarkRoutes);
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });
+});
+
+// Debug route to log all incoming requests
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request to ${req.originalUrl}`);
+  next();
+});
+
+// Catch-all route for API paths that don't exist
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API endpoint not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+// Catch-all route for non-API paths
+app.all('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Endpoint not found: ${req.method} ${req.originalUrl}. Note: API endpoints should be prefixed with /api`,
+  });
 });
 
 // Error handling middleware
