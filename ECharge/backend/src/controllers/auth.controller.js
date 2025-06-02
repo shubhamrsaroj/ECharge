@@ -49,11 +49,11 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Hash password
+    // Hash password directly (bypassing the pre-save hook to ensure consistency)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
+    // Create new user with the hashed password
     const user = await User.create({
       name,
       email,
@@ -112,7 +112,7 @@ exports.login = async (req, res) => {
     // Try multiple password comparison methods to handle potential issues
     let isMatch = false;
     
-    // Method 1: Direct bcrypt compare
+    // Method 1: Direct bcrypt compare with original password
     try {
       isMatch = await bcrypt.compare(password, user.password);
     } catch (err) {
@@ -120,7 +120,7 @@ exports.login = async (req, res) => {
     }
     
     // Method 2: Try with trimmed password if the first method fails
-    if (!isMatch) {
+    if (!isMatch && password !== password.trim()) {
       try {
         const trimmedPassword = password.trim();
         isMatch = await bcrypt.compare(trimmedPassword, user.password);
@@ -137,6 +137,13 @@ exports.login = async (req, res) => {
         console.error('Error in model password comparison:', err);
       }
     }
+    
+    // Log detailed password information for troubleshooting (will be removed in production)
+    console.log({
+      passwordLength: password.length,
+      passwordHash: user.password.substring(0, 20) + '...',
+      isMatch
+    });
     
     if (!isMatch) {
       return res.status(401).json({
